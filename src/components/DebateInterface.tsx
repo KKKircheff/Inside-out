@@ -78,6 +78,7 @@ export default function DebateInterface({ onSaveDecision }: DebateInterfaceProps
     // Research Layer
     const [researchResults, setResearchResults] = useState<ResearchResult[]>([]);
     const [isResearching, setIsResearching] = useState(false);
+    const [isPreparingDebate, setIsPreparingDebate] = useState(false);
 
     // Available agents (loaded from Firebase)
     const [availableAgents, setAvailableAgents] = useState<Agent[]>([]);
@@ -625,6 +626,15 @@ export default function DebateInterface({ onSaveDecision }: DebateInterfaceProps
             return;
         }
 
+        // Set preparing state right before starting debate stream
+        setIsPreparingDebate(true);
+
+        // Safety timeout: clear preparing state after 10 seconds if stream hasn't started
+        const timeoutId = setTimeout(() => {
+            setIsPreparingDebate(false);
+            console.warn('⚠️ Debate stream timed out - clearing loading state');
+        }, 10000);
+
         try {
             const enrichedContext = research ? formatResearchContext(research) : undefined;
 
@@ -645,8 +655,16 @@ export default function DebateInterface({ onSaveDecision }: DebateInterfaceProps
             );
 
             // Process debate stream - convert events to pending messages
+            let isFirstEvent = true;
             for await (const event of readStreamableValue(stream)) {
                 if (!event) continue;
+
+                // Clear timeout and preparing state on first event only
+                if (isFirstEvent) {
+                    clearTimeout(timeoutId);
+                    setIsPreparingDebate(false);
+                    isFirstEvent = false;
+                }
 
                 const { event: eventType, data } = event as { event: string; data: Record<string, unknown> };
 
@@ -753,7 +771,9 @@ export default function DebateInterface({ onSaveDecision }: DebateInterfaceProps
             }
         } catch (err) {
             console.error('Debate error:', err);
+            clearTimeout(timeoutId);
             setError(err instanceof Error ? err.message : 'Debate failed');
+            setIsPreparingDebate(false);
             setStage('input');
         }
     };
@@ -782,6 +802,7 @@ export default function DebateInterface({ onSaveDecision }: DebateInterfaceProps
         setError(null);
         setIntelligenceResult(null);
         setResearchResults([]);
+        setIsPreparingDebate(false);
         setAgents([]);
         setChatMessages([]);
         setDecisionOutput(null);
@@ -1010,6 +1031,19 @@ export default function DebateInterface({ onSaveDecision }: DebateInterfaceProps
                                 ))}
                             </List>
                         )}
+                        <LinearProgress />
+                    </CardContent>
+                </Card>
+            )}
+
+            {/* Preparing Debate Stage */}
+            {isPreparingDebate && (
+                <Card sx={{ mb: 3 }}>
+                    <CardContent>
+                        <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                            <CircularProgress size={20} sx={{ mr: 2 }} />
+                            <Typography variant="h6">Preparing agents for debate...</Typography>
+                        </Box>
                         <LinearProgress />
                     </CardContent>
                 </Card>

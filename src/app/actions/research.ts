@@ -116,44 +116,53 @@ async function researchWithPerplexity(query: string): Promise<{ summary: string;
 
 /**
  * Main Research Layer - conducts research based on task type
+ * Uses Promise.all() for parallel execution to minimize latency
  */
 export async function conductResearch(tasks: ResearchTask[]): Promise<ResearchResult[]> {
-  const results: ResearchResult[] = [];
+  // Execute all research tasks in parallel
+  const results = await Promise.all(
+    tasks.map(async (task) => {
+      let summary: string;
+      let sources: string[] = [];
 
-  for (const task of tasks) {
-    let summary: string;
-    let sources: string[] = [];
+      try {
+        switch (task.type) {
+          case 'url':
+            // Extract URL from query
+            const urlMatch = task.query.match(/https?:\/\/[^\s]+/);
+            const url = urlMatch ? urlMatch[0] : task.query;
+            summary = await researchWithJina(url);
+            sources = [url];
+            break;
 
-    switch (task.type) {
-      case 'url':
-        // Extract URL from query
-        const urlMatch = task.query.match(/https?:\/\/[^\s]+/);
-        const url = urlMatch ? urlMatch[0] : task.query;
-        summary = await researchWithJina(url);
-        sources = [url];
-        break;
+          case 'product':
+            summary = await researchWithGemini(task.query);
+            break;
 
-      case 'product':
-        summary = await researchWithGemini(task.query);
-        break;
+          case 'general':
+            const perplexityResult = await researchWithPerplexity(task.query);
+            summary = perplexityResult.summary;
+            sources = perplexityResult.sources;
+            break;
 
-      case 'general':
-        const perplexityResult = await researchWithPerplexity(task.query);
-        summary = perplexityResult.summary;
-        sources = perplexityResult.sources;
-        break;
+          default:
+            summary = 'Unknown research type';
+        }
+      } catch (error) {
+        // Graceful degradation: if one research task fails, continue with others
+        console.error(`Research task failed for "${task.query}":`, error);
+        summary = `Research unavailable: ${error instanceof Error ? error.message : 'Unknown error'}`;
+        sources = [];
+      }
 
-      default:
-        summary = 'Unknown research type';
-    }
-
-    results.push({
-      query: task.query,
-      type: task.type,
-      summary,
-      sources,
-    });
-  }
+      return {
+        query: task.query,
+        type: task.type,
+        summary,
+        sources,
+      };
+    })
+  );
 
   return results;
 }
