@@ -1,0 +1,60 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper function: Check if user is authenticated
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    // Helper function: Check if user owns the document
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    // ========================================
+    // System Agents Collection (Global, Read-Only)
+    // ========================================
+    match /system-agents/{agentId} {
+      // Allow anyone to read system agents (public, read-only)
+      allow read: if true;
+
+      // No one can write (managed via migration script with admin SDK)
+      allow write: if false;
+    }
+
+    // ========================================
+    // Users Collection
+    // ========================================
+    match /users/{userId} {
+      // Allow users to read and write their own profile
+      allow read, write: if isOwner(userId);
+
+      // Custom Agents Subcollection
+      match /custom-agents/{agentId} {
+        // Allow users to manage their own custom agents
+        allow read, write: if isOwner(userId);
+      }
+
+      // Debates Subcollection
+      match /debates/{debateId} {
+        // Allow users to manage their own debates
+        allow read, write, delete: if isOwner(userId);
+
+        // Debate Messages Subcollection
+        match /messages/{messageId} {
+          // Allow users to manage messages within their own debates
+          allow read, write, delete: if isOwner(userId);
+        }
+      }
+    }
+
+    // ========================================
+    // Default: Deny all other access
+    // ========================================
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
