@@ -1,0 +1,129 @@
+# Firebase App Hosting Configuration for Devil's Advocate
+# Project: inside-out-agents
+# https://firebase.google.com/docs/app-hosting
+
+# Runtime configuration (commented out - using defaults)
+# runConfig:
+#   cpu: 1
+#   memoryMiB: 512
+#   concurrency: 80
+
+# Environment variables
+env:
+  # ====================================
+  # Firebase Client Configuration (Public)
+  # Safe to expose on frontend
+  # ====================================
+  - variable: NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN
+    value: inside-out-agents.firebaseapp.com
+    availability:
+      - BUILD
+      - RUNTIME
+
+  - variable: NEXT_PUBLIC_FIREBASE_PROJECT_ID
+    value: inside-out-agents
+    availability:
+      - BUILD
+      - RUNTIME
+
+  # ====================================
+  # Azure OpenAI Configuration (Main Debate System)
+  # Resource: kirch-md03vahe-swedencentral
+  # ====================================
+  - variable: AZURE_RESOURCE_NAME
+    value: kirch-md03vahe-swedencentral
+    availability:
+      - BUILD
+      - RUNTIME
+
+  - variable: AZURE_API_KEY
+    secret: AZURE_API_KEY
+    availability:
+      - RUNTIME
+
+  - variable: AZURE_API_VERSION
+    value: 2024-08-01-preview
+    availability:
+      - BUILD
+      - RUNTIME
+
+  - variable: AZURE_GPT_DEPLOYMENT_NAME
+    value: gpt-5-chat
+    availability:
+      - BUILD
+      - RUNTIME
+
+  # ====================================
+  # Azure Text-to-Speech (Voice Output)
+  # Resource: kirch-mguo3ia3-eastus2
+  # ====================================
+  - variable: AZURE_TTS_RESOURCE_NAME
+    value: kirch-mguo3ia3-eastus2
+    availability:
+      - BUILD
+      - RUNTIME
+
+  - variable: AZURE_TTS_API_KEY
+    secret: AZURE_TTS_API_KEY
+    availability:
+      - RUNTIME
+
+  - variable: AZURE_TTS_DEPLOYMENT_NAME
+    value: gpt-4o-mini-tts
+    availability:
+      - BUILD
+      - RUNTIME
+
+  - variable: AZURE_TTS_API_VERSION
+    value: 2025-03-01-preview
+    availability:
+      - BUILD
+      - RUNTIME
+
+  # ====================================
+  # Azure Whisper (Speech-to-Text / Voice Input)
+  # ====================================
+  - variable: AZURE_WHISPER_DEPLOYMENT_NAME
+    value: whisper
+    availability:
+      - BUILD
+      - RUNTIME
+
+  - variable: AZURE_WHISPER_API_VERSION
+    value: 2024-06-01
+    availability:
+      - BUILD
+      - RUNTIME
+
+  # ====================================
+  # Research Layer APIs
+  # ====================================
+  - variable: GOOGLE_GENERATIVE_AI_API_KEY
+    secret: GOOGLE_GENERATIVE_AI_API_KEY
+    availability:
+      - RUNTIME
+
+  - variable: JINA_API_KEY
+    secret: JINA_API_KEY
+    availability:
+      - RUNTIME
+
+  - variable: PERPLEXITY_API_KEY
+    secret: PERPLEXITY_API_KEY
+    availability:
+      - RUNTIME
+
+  # ====================================
+  # Firebase Admin SDK (Server-side)
+  # ====================================
+  - variable: FIREBASE_CLIENT_EMAIL
+    value: firebase-adminsdk-fbsvc@inside-out-agents.iam.gserviceaccount.com
+    availability:
+      - BUILD
+      - RUNTIME
+
+  - variable: FIREBASE_PRIVATE_KEY
+    secret: FIREBASE_PRIVATE_KEY
+    availability:
+      - BUILD
+      - RUNTIME

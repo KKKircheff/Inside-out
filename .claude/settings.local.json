@@ -1,8 +1,8 @@
 {
   "permissions": {
     "allow": [
-      "Bash(git checkout origin/v-dev -- src/components/AgentManager.tsx src/components/AgentSelector.tsx src/components/ClarifyingQuestionsPanel.tsx)",
-      "Bash(node -e \"\nconst toCamelCase = (str) => str.replace(/[-_]([a-z])/g, (_, letter) => letter.toUpperCase());\n\nconsole.log(''data-scientist =>'', toCamelCase(''data-scientist''));\nconsole.log(''my-custom-agent =>'', toCamelCase(''my-custom-agent''));\nconsole.log(''risk_analyzer =>'', toCamelCase(''risk_analyzer''));\nconsole.log(''simple =>'', toCamelCase(''simple''));\nconsole.log(''multi-word-example =>'', toCamelCase(''multi-word-example''));\n\")"
+      "Bash(firebase apphosting:secrets:set:*)",
+      "Bash(printf:*)"
     ],
     "deny": [],
     "ask": []
