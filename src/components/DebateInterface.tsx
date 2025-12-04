@@ -536,14 +536,14 @@ export default function DebateInterface({ onSaveDecision }: DebateInterfaceProps
 
             if (result.status === 'clarify') {
                 // Check if we've exceeded max rounds
-                if (clarifyingRound >= 2) {
-                    // Max 2 rounds reached, proceed with what we have
+                if (clarifyingRound >= 1) {
+                    // Max 1 round reached, proceed with what we have
                     await handleDebate(undefined, fullContext);
                     return;
                 }
 
                 // Show clarifying questions panel
-                const questions = result.clarifyingQuestions?.slice(0, 3) || []; // Max 3 questions
+                const questions = result.clarifyingQuestions?.slice(0, 1) || []; // Max 1 question
                 setCurrentClarifyingQuestions(questions);
                 setClarifyingRound(prev => prev + 1);
                 setClarifyingPanelOpen(true);
@@ -1022,7 +1022,7 @@ export default function DebateInterface({ onSaveDecision }: DebateInterfaceProps
                 </Box>
             )}
 
-            {/* Results Stage */}
+            {/* Results Stage
             {stage === 'results' && decisionOutput && (
                 <>
                     <Card sx={{ bgcolor: 'primary.main', color: 'primary.contrastText', mb: 3 }}>
@@ -1123,7 +1123,7 @@ export default function DebateInterface({ onSaveDecision }: DebateInterfaceProps
                         Analyze Another Decision
                     </Button>
                 </>
-            )}
+            )} */}
 
             {/* Hidden audio player */}
             <audio ref={audioPlayerRef} style={{ display: 'none' }} />

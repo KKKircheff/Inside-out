@@ -16,24 +16,20 @@ const __dirname = path.dirname(__filename);
 // Load environment variables from .env file
 config({ path: path.join(__dirname, '..', '.env') });
 
-// Initialize Firebase Admin (use same config as src/lib/firebase/admin.ts)
-const projectId = process.env.FIREBASE_PROJECT_ID;
-const clientEmail = process.env.FIREBASE_CLIENT_EMAIL;
-const privateKey = process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n');
+// Initialize Firebase Admin using service account JSON file
+const serviceAccountPath = path.join(__dirname, '..', '.no-track', 'inside-out-agents-firebase-adminsdk-fbsvc-1b5943371e.json');
 
-if (!projectId || !clientEmail || !privateKey) {
+if (!fs.existsSync(serviceAccountPath)) {
   throw new Error(
-    'Firebase Admin credentials are missing. Please set FIREBASE_PROJECT_ID, FIREBASE_CLIENT_EMAIL, and FIREBASE_PRIVATE_KEY in your .env.local file.'
+    `Service account file not found at: ${serviceAccountPath}`
   );
 }
 
+const serviceAccount = JSON.parse(fs.readFileSync(serviceAccountPath, 'utf-8'));
+
 if (!admin.apps.length) {
   admin.initializeApp({
-    credential: admin.credential.cert({
-      projectId,
-      clientEmail,
-      privateKey,
-    }),
+    credential: admin.credential.cert(serviceAccount),
   });
 }
 

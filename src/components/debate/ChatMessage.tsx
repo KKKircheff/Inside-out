@@ -98,7 +98,7 @@ export default function ChatMessage({
                         >
                             <CircularProgress size={16} sx={{ color: agentColor }} />
                             <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.95rem' }}>
-                                Converting to audio...
+                                Thinking ...
                             </Typography>
                         </Box>
                     )}

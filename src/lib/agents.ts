@@ -98,7 +98,7 @@ Respond with a JSON object:
   "confidence": "high" | "medium" | "low",
   "coreDecision": "one-sentence summary of the decision",
   "keyVariables": ["list", "of", "main", "factors"],
-  "clarifyingQuestions": ["question1", "question2", "question3"] (MAXIMUM 3 QUESTIONS if status is "clarify") OR null (if status is "proceed" or "research"),
+  "clarifyingQuestions": ["question1"] (MAXIMUM 1 QUESTION if status is "clarify") OR null (if status is "proceed" or "research"),
   "researchNeeded": [
     {
       "query": "specific research query",

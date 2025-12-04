@@ -54,7 +54,7 @@ export default function ClarifyingQuestionsPanel({
                         Help us understand better
                     </Typography>
                     <Typography variant="caption" color="text.secondary">
-                        Round {round} of 2 • {questions.length} question{questions.length > 1 ? 's' : ''}
+                        1 question to help us understand better
                     </Typography>
                 </Alert>
 
@@ -66,7 +66,7 @@ export default function ClarifyingQuestionsPanel({
                                 variant="body1"
                                 sx={{ mb: 1.5, fontWeight: 500 }}
                             >
-                                {index + 1}. {question}
+                                {question}
                             </Typography>
                             <TextField
                                 fullWidth
