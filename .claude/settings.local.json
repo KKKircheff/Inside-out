@@ -2,7 +2,10 @@
   "permissions": {
     "allow": [
       "Bash(firebase apphosting:secrets:set:*)",
-      "Bash(printf:*)"
+      "Bash(printf:*)",
+      "Bash(firebase apphosting:secrets:grantaccess:*)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:raw.githubusercontent.com)"
     ],
     "deny": [],
     "ask": []

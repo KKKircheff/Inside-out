@@ -17,6 +17,10 @@
 /.next/
 /out/
 /.no-track/
+/.firebase
+
+# Firebase auth config (contains user data)
+auth-config.json
 
 # production
 /build
